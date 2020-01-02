@@ -20,7 +20,7 @@
                  "data": {  
                      "grant_type": "client_credentials",  
                      "client_id ": "4b53bda2-8c19-4d38-b1f2-31f4a6070ac8", //Provide your app id    
-                     "client_secret": "Yag7eliyIdAMa8/9AI6vpeNgFhC/ys]-", //Provide your client secret genereated from your app
+                     "client_secret": "***********", //Provide your client secret genereated from your app
                      "scope ": "https://graph.microsoft.com/.default" 
                  },  
                  success: function(response) {  
