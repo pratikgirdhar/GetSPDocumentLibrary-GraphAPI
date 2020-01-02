@@ -1,0 +1,60 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    
+ <script type="text/javascript">  
+     $(document).ready(function() {  
+         requestToken();  
+     });  
+    
+     var token;  
+    
+         function requestToken() {  
+        
+             $.ajax({  
+                 "async": true,  
+                 "crossDomain": true,  
+                 "url": "https://cors-anywhere.herokuapp.com/https://login.microsoftonline.com/girdhar.onmicrosoft.com/oauth2/v2.0/token", // Pass your tenant name instead of sharepointtechie    
+                 "method": "POST",  
+                 "headers": {  
+                     "content-type": "application/x-www-form-urlencoded" 
+                 },  
+                 "data": {  
+                     "grant_type": "client_credentials",  
+                     "client_id ": "4b53bda2-8c19-4d38-b1f2-31f4a6070ac8", //Provide your app id    
+                     "client_secret": "Yag7eliyIdAMa8/9AI6vpeNgFhC/ys]-", //Provide your client secret genereated from your app
+                     "scope ": "https://graph.microsoft.com/.default" 
+                 },  
+                 success: function(response) {  
+                      
+                     token = response.access_token;
+					 getUserInformation();
+                     
+                 }  
+        
+             })  
+         }
+function getUserInformation() { 
+    $.ajax({ 
+        method: 'GET', 
+        url: "https://graph.microsoft.com/v1.0/users/pratik@girdhar.onmicrosoft.com", 
+        headers: { 
+'Authorization': 'Bearer ' + token, 
+'Content-Type': 'application/json'
+        }, 
+    }).success(function(response) { 
+        console.log(response);
+        var Name = response.displayName;
+		var Email = response.mail;
+		var businessphone = response.businessPhones[0];
+		var Title = response.jobTitle;
+		document.getElementById('userDisplayName').innerHTML = Name;
+		document.getElementById('userEmail').innerHTML = Email;
+		document.getElementById('userBusiness').innerHTML = businessphone;
+		document.getElementById('userTitle').innerHTML = Title;
+       	
+    }).error(function(error) {}); 
+}		 
+</script>
+Name:<p id="userDisplayName"></p>
+Email:<p id="userEmail"></p>
+BusinessPhone:<p id="userBusiness"></p>
+Job Title:<p id="userTitle"></p>

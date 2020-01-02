@@ -1,0 +1,107 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.11.2/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script> 
+<script src="//cdn.datatables.net/plug-ins/1.10.12/sorting/datetime-moment.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.12/css/dataTables.jqueryui.min.css">  
+ <script type="text/javascript">  
+     $(document).ready(function() {  
+         requestToken();  
+     });  
+    
+     var token;  
+    
+         function requestToken() {  
+        
+             $.ajax({  
+                 "async": true,  
+                 "crossDomain": true,  
+                 "url": "https://cors-anywhere.herokuapp.com/https://login.microsoftonline.com/girdhar.onmicrosoft.com/oauth2/v2.0/token", // Pass your tenant name instead of sharepointtechie    
+                 "method": "POST",  
+                 "headers": {  
+                     "content-type": "application/x-www-form-urlencoded" 
+                 },  
+                 "data": {  
+                     "grant_type": "client_credentials",  
+                     "client_id ": "4b53bda2-8c19-4d38-b1f2-31f4a6070ac8", //Provide your app id    
+                     "client_secret": "Yag7eliyIdAMa8/9AI6vpeNgFhC/ys]-", //Provide your client secret genereated from your app
+                     "scope ": "https://graph.microsoft.com/.default" 
+                 },  
+                 success: function(response) {  
+                      
+                     token = response.access_token;
+					 getUserInformation();
+                     
+                 }  
+        
+             })  
+         }
+function getUserInformation() { 
+    $.ajax({ 
+        method: 'GET', 
+        url: "https://graph.microsoft.com/v1.0/sites/b09713e3-48c8-440f-b561-40c8cd878794,f05259da-d9c7-4f8d-aa6d-c3a774b7fa58/lists/Scope%20of%20Work/drive/root/children", //Get All Folders
+        headers: { 
+'Authorization': 'Bearer ' + token, 
+'Content-Type': 'application/json'
+        }, 
+		success: mySuccHandler,
+		error: myErrHandler
+    });
+}
+function mySuccHandler(response) {
+console.log(response);
+try {
+ $('#table_id').DataTable({
+ 
+"aaData": response.value,
+"aoColumns": [
+{    
+                "mData": "createdBy.user.displayName"    
+            },   
+            {    
+                "mData": "webUrl" ,
+                "data": "weblink",				
+				 "render": function(data, type, row, meta){
+            
+               return data = '<a target="_blank" href="' + data + '">AddHere</a>';
+            }
+            }, 
+			
+            {    
+                "mData": "folder.childCount"    
+            },   
+            {    
+                "mData": "lastModifiedDateTime",
+                 "type": "datetime",
+                 render: function(d) { return moment(d).format("M/D/YYYY");}				 
+            },  
+            {    
+                "mData": "name"    
+            }
+]
+});	
+} catch (e)	 {
+alert(e.message);
+}
+}
+function myErrHandler(data, errMessage) {    
+    alert("Error: " + errMessage);    
+} 
+</script>
+<html>
+<div>
+<table id="table_id" class="display" cellspacing="0" width="100%">    
+        <thead>    
+            <tr>    
+                <th>Created By</th>    
+                <th>Link</th>
+               				
+                <th>No of Documents in Folders</th>    
+                <th>ModiFied On</th>    
+                <th>Folder Name</th>            
+            </tr>    
+        </thead>    
+      </table>    
+    </div>
+	</html>
